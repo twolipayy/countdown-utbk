@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown SNBT UTBK 2025</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            overflow-y: auto;
+            flex-direction: column;
+        }
+
+
+        .countdown-container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 3rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 800px;
+            width: 90%;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #fff, #f0f0f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: bold;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+            opacity: 0.9;
+        }
+
+        .countdown-display {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .time-unit {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 2rem 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .time-unit::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+
+        .time-unit:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .time-number {
+            font-size: 3rem;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 2;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .time-label {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+            position: relative;
+            z-index: 2;
+        }
+
+        .exam-date {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .exam-date h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .exam-date p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .date-input-section {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .date-input-section label {
+            display: block;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .date-input-section input {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 12px 15px;
+            font-size: 1rem;
+            color: white;
+            margin-right: 1rem;
+            margin-bottom: 1rem;
+            min-width: 200px;
+        }
+
+        .date-input-section input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .date-input-section input::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            cursor: pointer;
+        }
+
+        .date-input-section button {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 20px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-right: 0.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(238, 90, 36, 0.3);
+        }
+
+        .date-input-section button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(238, 90, 36, 0.4);
+        }
+
+        .date-input-section button:active {
+            transform: translateY(0);
+        }
+
+        #resetBtn {
+            background: linear-gradient(45deg, #48cae4, #023e8a);
+            box-shadow: 0 5px 15px rgba(72, 202, 228, 0.3);
+        }
+
+        #resetBtn:hover {
+            box-shadow: 0 8px 25px rgba(72, 202, 228, 0.4);
+        }
+
+        .current-target {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+            margin-top: 2rem;
+            font-size: 1.1rem;
+            font-style: italic;
+            opacity: 0.8;
+            animation: fadeInOut 4s eas e-in-out infinite;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        /* Floating particles */
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .particle:nth-child(1) {
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .particle:nth-child(2) {
+            top: 40%;
+            right: 15%;
+            animation-delay: 2s;
+        }
+
+        .particle:nth-child(3) {
+            bottom: 30%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        .particle:nth-child(4) {
+            top: 60%;
+            right: 25%;
+            animation-delay: 1s;
+        }
+
+        .particle:nth-child(5) {
+            bottom: 20%;
+            right: 10%;
+            animation-delay: 3s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+                opacity: 0.6;
+            }
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+                opacity: 1;
+            }
+        }
+
+        /* Status message */
+        .status-message {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 15px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .status-urgent {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            animation: blink 1s ease-in-out infinite alternate;
+        }
+
+        .status-warning {
+            background: linear-gradient(45deg, #feca57, #ff9ff3);
+        }
+
+        .status-normal {
+            background: linear-gradient(45deg, #48cae4, #023e8a);
+        }
+
+        @keyframes blink {
+            from { opacity: 0.7; }
+            to { opacity: 1; }
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .countdown-container {
+                padding: 2rem 1.5rem;
+            }
+
+            .title {
+                font-size: 2rem;
+            }
+
+            .countdown-display {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+
+            .time-unit {
+                padding: 1.5rem 0.5rem;
+            }
+
+            .time-number {
+                font-size: 2.5rem;
+            }
+
+            .time-label {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .time-number {
+                font-size: 2rem;
+            }
+
+            .countdown-display {
+                gap: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating particles -->
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+
+    <div class="countdown-container">
+        <h1 class="title">COUNTDOWN SNBT UTBK 2025</h1>
+        <p class="subtitle">Bersiaplah untuk meraih impianmu!</p>
+        
+        <div class="date-input-section">
+            <label for="targetDateInput">📅 Pilih Tanggal Target:</label>
+            <input type="datetime-local" id="targetDateInput" />
+            <button id="setDateBtn">Set Countdown</button>
+            <button id="resetBtn">Reset ke Default</button>
+        </div>
+        
+        <div class="countdown-display">
+            <div class="time-unit">
+                <span class="time-number" id="days">000</span>
+                <span class="time-label">Hari</span>
+            </div>
+            <div class="time-unit">
+                <span class="time-number" id="hours">00</span>
+                <span class="time-label">Jam</span>
+            </div>
+            <div class="time-unit">
+                <span class="time-number" id="minutes">00</span>
+                <span class="time-label">Menit</span>
+            </div>
+            <div class="time-unit">
+                <span class="time-number" id="seconds">00</span>
+                <span class="time-label">Detik</span>
+            </div>
+        </div>
+
+        <div class="exam-date">
+            <h3>📅 Jadwal SNBT UTBK 2025</h3>
+            <p><strong>Periode Ujian:</strong> 23 April-3 Mei 2025</p>
+            <div class="current-target" id="currentTarget">
+                Tanggal Pengumuman: 28 Mei 2025, 15:00 WIB
+            </div>
+        </div>
+
+        <div class="status-message" id="statusMessage">
+            <span id="statusText">Apapun hasilnya, kamu sudah berusaha yang terbaik!</span>
+        </div>
+
+        <div class="motivational-text">
+            <span id="motivationalQuote">"Kesuksesan adalah hasil dari persiapan yang matang"</span>
+        </div>
+    </div>
+
+    <script>
+        // Default target date untuk SNBT UTBK 2025 (Gelombang 1: 6 Mei 2025)
+        let targetDate = new Date('2025-05-28T15:00:00').getTime();
+        
+        // Array quotes motivasi
+        const motivationalQuotes = [
+            "Kesuksesan adalah hasil dari persiapan yang matang",
+            "Setiap detik berharga untuk masa depanmu",
+            "Mimpi besar dimulai dari langkah kecil hari ini",
+            "Kegigihan adalah kunci membuka pintu kesuksesan",
+            "Percaya pada diri sendiri adalah langkah pertama menuju kemenangan",
+            "Hari ini adalah kesempatan untuk menjadi lebih baik",
+            "Masa depan cerah menanti mereka yang siap"
+        ];
+
+        let quoteIndex = 0;
+        let countdownInterval;
+
+        // Format date untuk input datetime-local
+        function formatDateForInput(date) {
+            const d = new Date(date);
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            const hours = String(d.getHours()).padStart(2, '0');
+            const minutes = String(d.getMinutes()).padStart(2, '0');
+            return `${year}-${month}-${day}T${hours}:${minutes}`;
+        }
+
+        // Format date untuk display
+        function formatDateForDisplay(date) {
+            const options = {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                timeZone: 'Asia/Jakarta'
+            };
+            return new Date(date).toLocaleDateString('id-ID', options) + ' WIB';
+        }
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const timeLeft = targetDate - now;
+
+            // Jika waktu sudah habis
+            if (timeLeft < 0) {
+                document.getElementById('days').textContent = '000';
+                document.getElementById('hours').textContent = '00';
+                document.getElementById('minutes').textContent = '00';
+                document.getElementById('seconds').textContent = '00';
+                
+                document.getElementById('statusText').textContent = '🎉 Waktunya telah tiba! Semoga sukses!';
+                document.getElementById('statusMessage').className = 'status-message status-normal';
+                return;
+            }
+
+            // Hitung waktu yang tersisa
+            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+            // Update tampilan
+            document.getElementById('days').textContent = days.toString().padStart(3, '0');
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+
+            // Update status message berdasarkan waktu tersisa
+            updateStatusMessage(days);
+        }
+
+        function updateStatusMessage(days) {
+            const statusMessage = document.getElementById('statusMessage');
+            const statusText = document.getElementById('statusText');
+
+            if (days <= 1) {
+                statusMessage.className = 'status-message status-urgent';
+                statusText.textContent = '🚨 URGENT: Kurang dari 24 jam lagi! Final preparation!';
+            } else if (days <= 7) {
+                statusMessage.className = 'status-message status-urgent';
+                statusText.textContent = '🚨 URGENT: Kurang dari seminggu lagi! Maksimalkan persiapan!';
+            } else if (days <= 30) {
+                statusMessage.className = 'status-message status-warning';
+                statusText.textContent = '⚠️ Waktu semakin dekat! Intensifkan latihan soal!';
+            } else if (days <= 60) {
+                statusMessage.className = 'status-message status-normal';
+                statusText.textContent = '📚 Waktu masih cukup untuk persiapan yang maksimal!';
+            } else {
+                statusMessage.className = 'status-message status-normal';
+                statusText.textContent = '✨ Masih ada banyak waktu untuk persiapan yang sempurna!';
+            }
+        }
+
+        function updateMotivationalQuote() {
+            const quoteElement = document.getElementById('motivationalQuote');
+            quoteElement.style.opacity = '0';
+            
+            setTimeout(() => {
+                quoteElement.textContent = `"${motivationalQuotes[quoteIndex]}"`;
+                quoteElement.style.opacity = '1';
+                quoteIndex = (quoteIndex + 1) % motivationalQuotes.length;
+            }, 500);
+        }
+
+        function startCountdown() {
+            // Clear existing interval
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+            
+            // Start new countdown
+            updateCountdown();
+            countdownInterval = setInterval(updateCountdown, 1000);
+        }
+
+        function setCustomDate() {
+            const inputDate = document.getElementById('targetDateInput').value;
+            
+            if (!inputDate) {
+                alert('⚠️ Mohon pilih tanggal dan waktu target!');
+                return;
+            }
+
+            const newTargetDate = new Date(inputDate).getTime();
+            const now = new Date().getTime();
+
+            if (newTargetDate <= now) {
+                alert('⚠️ Tanggal target harus di masa depan!');
+                return;
+            }
+
+            targetDate = newTargetDate;
+            
+            // Update display current target
+            document.getElementById('currentTarget').textContent = 
+                `Target saat ini: ${formatDateForDisplay(targetDate)}`;
+
+            // Restart countdown with new date
+            startCountdown();
+            
+            // Show success message
+            const statusText = document.getElementById('statusText');
+            const originalText = statusText.textContent;
+            statusText.textContent = '✅ Target berhasil diubah!';
+            setTimeout(() => {
+                const days = Math.floor((targetDate - new Date().getTime()) / (1000 * 60 * 60 * 24));
+                updateStatusMessage(days);
+            }, 2000);
+        }
+
+        function resetToDefault() {
+            targetDate = new Date('2025-05-28T15:00:00').getTime();
+            document.getElementById('targetDateInput').value = '';
+            document.getElementById('currentTarget').textContent = 
+                'Tanggal pengumuman: 28 Mei 2025, 15:00 WIB';
+            
+            startCountdown();
+            
+            // Show reset message
+            const statusText = document.getElementById('statusText');
+            statusText.textContent = '🔄 Target direset ke SNBT UTBK default!';
+            setTimeout(() => {
+                const days = Math.floor((targetDate - new Date().getTime()) / (1000 * 60 * 60 * 24));
+                updateStatusMessage(days);
+            }, 2000);
+        }
+
+        // Event listeners
+        document.getElementById('setDateBtn').addEventListener('click', setCustomDate);
+        document.getElementById('resetBtn').addEventListener('click', resetToDefault);
+
+        // Allow Enter key to set date
+        document.getElementById('targetDateInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                setCustomDate();
+            }
+        });
+
+        // Set minimum date to current date
+        document.getElementById('targetDateInput').min = formatDateForInput(new Date());
+
+        // Initialize
+        startCountdown();
+        setInterval(updateMotivationalQuote, 5000);
+
+        // Add click event untuk time units (easter egg)
+        document.querySelectorAll('.time-unit').forEach(unit => {
+            unit.addEventListener('click', function() {
+                this.style.transform = 'scale(1.1) rotate(360deg)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 500);
+            });
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === ' ') { // Spacebar
+                e.preventDefault();
+                updateMotivationalQuote();
+            }
+        });
+
+        // Initial status update
+        const now = new Date().getTime();
+        const timeLeft = targetDate - now;
+        const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+        updateStatusMessage(days);
+    </script>
+</body>
+</html>
